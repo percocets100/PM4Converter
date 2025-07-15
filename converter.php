@@ -1,5 +1,9 @@
 <?php
 
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use Exception;
+
 class PocketMineMigrator {
     private $directory;
     private $changes = [];
@@ -28,7 +32,7 @@ class PocketMineMigrator {
     ];
     
     private $methodSignatureChanges = [
-        'public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool' => 
+        'public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool' =>
         'public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool',
         
         'public function onEnable(): void' => 'public function onEnable(): void',
@@ -186,7 +190,6 @@ class PocketMineMigrator {
     }
     
     private function updateEventUseStatements($content) {
-        $eventNamespace = 'pocketmine\\event\\';
         $eventUpdates = [
             'use pocketmine\\event\\player\\PlayerJoinEvent;' => 'use pocketmine\\event\\player\\PlayerJoinEvent;',
             'use pocketmine\\event\\player\\PlayerQuitEvent;' => 'use pocketmine\\event\\player\\PlayerQuitEvent;',
@@ -298,6 +301,7 @@ class PocketMineMigrator {
     }
 }
 
+// CLI execution
 if (php_sapi_name() === 'cli') {
     if ($argc < 2) {
         echo "Usage: php migrate.php <plugin_directory>\n";
